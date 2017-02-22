@@ -17,8 +17,8 @@ class FlightServiceImpl(persistentEntityRegistry: PersistentEntityRegistry)(impl
 
   override def addFlight: ServiceCall[FlightDto, String] =
     ServiceCall { dto: FlightDto =>
-      val x = newEntityRef.ask(AddFlight(dto.callsign, dto.equipment, dto.departureIata, dto.arrivalIata, dto.departureTime, dto.arrivalTime))
-      newEntityRef.ask(AddFlight(dto.callsign, dto.equipment, dto.departureIata, dto.arrivalIata, dto.departureTime, dto.arrivalTime)).map(_ => "OK") // TODO: Enhance these OKs for list of failed validations OR success response
+      val x = newEntityRef.ask(AddFlight(dto.callsign, dto.equipment, dto.departureIata, dto.arrivalIata))
+      newEntityRef.ask(AddFlight(dto.callsign, dto.equipment, dto.departureIata, dto.arrivalIata)).map(_ => "OK") // TODO: Enhance these OKs for list of failed validations OR success response
     }
 
   override def addPassenger: ServiceCall[PassengerDto, String] =

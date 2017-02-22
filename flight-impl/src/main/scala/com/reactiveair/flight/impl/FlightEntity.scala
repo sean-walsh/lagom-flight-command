@@ -3,7 +3,6 @@ package com.reactiveair.flight.impl
 import akka.Done
 import com.lightbend.lagom.scaladsl.persistence._
 import play.api.libs.json.{Format, Json}
-import org.joda.time.DateTime
 
 import scala.collection.immutable.Seq
 
@@ -30,15 +29,15 @@ class FlightEntity extends PersistentEntity {
   private val initial: Actions =
     Actions()
       .onCommand[AddFlight, Done] {
-        case (AddFlight(callsign, equipment, departureIata, arrivalIata, departureTime, arrivalTime), ctx, state) =>
-          ctx.thenPersist(FlightAdded(entityId, callsign, equipment, departureIata, arrivalIata, departureTime, arrivalTime)) { _ =>
+        case (AddFlight(callsign, equipment, departureIata, arrivalIata), ctx, state) =>
+          ctx.thenPersist(FlightAdded(entityId, callsign, equipment, departureIata, arrivalIata)) { _ =>
             // After persist is done additional side effects can be performed
             ctx.reply(Done)
           }
       }
       .onEvent {
-        case (FlightAdded(flightId, callsign, equipment, departureIata, arrivalIata, departureTime, arrivalTime), state) =>
-          FlightState(Some(FlightInfo(flightId, callsign, equipment, departureIata, arrivalIata, departureTime, arrivalTime, false)))
+        case (FlightAdded(flightId, callsign, equipment, departureIata, arrivalIata), state) =>
+          FlightState(Some(FlightInfo(flightId, callsign, equipment, departureIata, arrivalIata, false)))
       }
 
   /**
@@ -121,8 +120,6 @@ final case class FlightInfo(
   equipment: String,
   departureIata: String,
   arrivalIata: String,
-  departureTime: DateTime,
-  arrivalTime: DateTime,
   doorsClosed: Boolean)
 
 final case class FlightState(flightInfo: Option[FlightInfo], passengers: Seq[Passenger] = Seq.empty)

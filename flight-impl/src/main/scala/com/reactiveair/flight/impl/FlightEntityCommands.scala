@@ -1,29 +1,21 @@
-/**
-  * Commands for Flight persistent entity.
-  */
 package com.reactiveair.flight.impl
 
 import akka.Done
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntity.ReplyType
-import com.lightbend.lagom.scaladsl.playjson.JsonSerializer
-import org.joda.time.DateTime
-import play.api.libs.json.Json
+import play.api.libs.json.{Format, Json}
 
-sealed trait FlightCommand {
+sealed trait FlightCommand
 
-  import JsonSerializer.emptySingletonFormat
+object FlightCommand {
 
-  val serializers = Vector(
-    JsonSerializer(Json.format[AddFlight]),
-    JsonSerializer(Json.format[AddPassenger]),
-    JsonSerializer(Json.format[RemovePassenger]),
-    JsonSerializer(Json.format[SelectSeat]),
-    JsonSerializer(emptySingletonFormat(CloseFlight))
-  )
+  implicit val addFlightFormat: Format[AddFlight] = Json.format
+  implicit val addPassengerFormat: Format[AddPassenger] = Json.format
+  implicit val selectSeatFormat: Format[SelectSeat] = Json.format
+  implicit val removePassengerFormat: Format[RemovePassenger] = Json.format
+  implicit val closeFlightFormat: Format[CloseFlight.type] = JsonFormats.singletonFormat(CloseFlight)
 }
 
-final case class AddFlight(callsign: String, equipment: String, departureIata: String, arrivalIata: String,
-                           departureTime: DateTime, arrivalTime: DateTime) extends FlightCommand with ReplyType[Done]
+final case class AddFlight(callsign: String, equipment: String, departureIata: String, arrivalIata: String) extends FlightCommand with ReplyType[Done]
 
 final case class AddPassenger(passengerId: String, lastName: String, firstName: String, initial: String,
                               seatAssignment: Option[String]) extends FlightCommand with ReplyType[Done]
