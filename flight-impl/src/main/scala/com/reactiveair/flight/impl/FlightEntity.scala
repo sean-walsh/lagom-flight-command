@@ -53,7 +53,7 @@ class FlightEntity extends PersistentEntity {
       }
       .onEvent {
         case (PassengerAdded(_, passengerId, lastName, firstName, initial, seatAssignment), state) =>
-          state.copy(passengers = state.passengers.+: (Passenger(passengerId, lastName, firstName, initial, seatAssignment)))
+          state.copy(passengers = state.passengers .+: (Passenger(passengerId, lastName, firstName, initial, seatAssignment)))
       }
       .onCommand[SelectSeat, Done] {
         case (SelectSeat(passengerId, seatAssignment), ctx, state) =>
@@ -67,7 +67,7 @@ class FlightEntity extends PersistentEntity {
             case Some(p) => p
             case None    => throw new Exception(s"passenger $passengerId does not exist!")
           }).copy(seatAssignment = Some(seatAssignment))
-          state.copy(passengers = state.passengers.filterNot(_.passengerId == passengerId).+:(passenger))
+          state.copy(passengers = state.passengers.filterNot(_.passengerId == passengerId) .+: (passenger))
       }
       .onCommand[RemovePassenger, Done] {
         case (RemovePassenger(passengerId), ctx, state) =>
