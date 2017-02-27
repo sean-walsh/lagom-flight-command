@@ -3,7 +3,6 @@ package com.reactiveair.flight.api
 import java.util.UUID
 
 import com.lightbend.lagom.scaladsl.api.{Service, ServiceCall}
-import org.joda.time.DateTime
 import play.api.libs.json.{Format, Json}
 import FlightServiceApi._
 import akka.NotUsed
@@ -63,9 +62,7 @@ object FlightServiceApi {
     callsign: String,
     equipment: String,
     departureIata: String,
-    arrivalIata: String,
-    departureTime: DateTime,
-    arrivalTime: DateTime)
+    arrivalIata: String)
 
   case class SelectSeatDto(flightId: UUID, passengerId: UUID, seatAssignment: String)
 

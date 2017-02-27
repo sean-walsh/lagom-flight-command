@@ -1,7 +1,6 @@
 lazy val root = (project in file("."))
   .settings(name := "reactiveair-flight-scala")
   .aggregate(flightApi, flightImpl)
-  .settings(commonSettings: _*)
 
 organization in ThisBuild := "com.reactiveair"
 
@@ -13,7 +12,6 @@ val macwire = "com.softwaremill.macwire" %% "macros" % "2.2.5" % "provided"
 val scalaTest = "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 
 lazy val flightApi = (project in file("flight-api"))
-  .settings(commonSettings: _*)
   .settings(
     version := "1.0-SNAPSHOT",
     libraryDependencies ++= Seq(
@@ -23,7 +21,6 @@ lazy val flightApi = (project in file("flight-api"))
   )
 
 lazy val flightImpl = (project in file("flight-impl"))
-  .settings(commonSettings: _*)
   .enablePlugins(LagomScala)
   .dependsOn(flightApi)
   .settings(
@@ -37,8 +34,6 @@ lazy val flightImpl = (project in file("flight-impl"))
     ),
     maxErrors := 10000
   )
+  .settings(lagomForkedTestSettings: _*)
 
-def commonSettings: Seq[Setting[_]] = Seq(
-)
-
-lagomCassandraCleanOnStart in ThisBuild := false
+lagomCassandraCleanOnStart in ThisBuild := true

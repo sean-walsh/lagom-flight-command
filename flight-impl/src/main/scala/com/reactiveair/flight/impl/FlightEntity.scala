@@ -28,11 +28,11 @@ class FlightEntity extends PersistentEntity {
     */
   private val initial: Actions =
     Actions()
-      .onCommand[AddFlight, Done] {
+      .onCommand[AddFlight, AddFlightReply] {
         case (AddFlight(callsign, equipment, departureIata, arrivalIata), ctx, state) =>
           ctx.thenPersist(FlightAdded(entityId, callsign, equipment, departureIata, arrivalIata)) { _ =>
             // After persist is done additional side effects can be performed
-            ctx.reply(Done)
+            ctx.reply(AddFlightReply(s"OK:$entityId"))
           }
       }
       .onEvent {
