@@ -37,17 +37,52 @@ class FlightServiceSpec extends AsyncWordSpec with Matchers with BeforeAndAfterA
 
     "add a passenger" in {
       for {
-        f <- addFlightHelper
-        d =  PassengerDto(f, "Walsh", "Sean", "A", Some("1A"))
-        p <- client.addPassenger.invoke(d)
+        flightId <- addFlightHelper
+        response <- client.addPassenger.invoke(PassengerDto(flightId, "Walsh", "Sean", "A", Some("1A")))
       } yield {
-        p should ===("OK")
+        response.startsWith("OK") should ===(true)
+      }
+    }
+
+    "remove a passenger" in {
+      for {
+        flightId    <- addFlightHelper
+        passengerId <- addPassengerHelper(flightId)
+        response    <- client.removePassenger(flightId, passengerId).invoke()
+      } yield {
+        response should ===("OK")
+      }
+    }
+
+    "select a seat" in {
+      for {
+        flightId    <- addFlightHelper
+        passengerId <- addPassengerHelper(flightId)
+        response    <- client.selectSeat.invoke(SelectSeatDto(flightId, passengerId, "1A"))
+      } yield {
+        response should ===("OK")
+      }
+    }
+
+    "close a flight" in {
+      for {
+        flightId    <- addFlightHelper
+        response    <- client.closeFlight(flightId).invoke()
+      } yield {
+        response should ===("OK")
       }
     }
   }
 
   private def addFlightHelper: Future[UUID] = {
     client.addFlight.invoke(FlightDto(Callsign, Equipment, Departure, Arrival)).map { response =>
+      response.startsWith("OK") should ===(true)
+      UUID.fromString(response.split(":")(1))
+    }
+  }
+
+  private def addPassengerHelper(flightId: UUID): Future[UUID] = {
+    client.addPassenger.invoke(PassengerDto(flightId, "Walsh", "Sean", "A", Some("1A"))).map { response =>
       response.startsWith("OK") should ===(true)
       UUID.fromString(response.split(":")(1))
     }

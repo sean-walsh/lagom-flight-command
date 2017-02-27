@@ -2,7 +2,6 @@ package com.reactiveair.flight.impl
 
 import java.util.UUID
 
-import akka.NotUsed
 import com.lightbend.lagom.scaladsl.api.ServiceCall
 import com.lightbend.lagom.scaladsl.persistence.PersistentEntityRegistry
 import com.reactiveair.flight.api.FlightService
@@ -15,17 +14,17 @@ import scala.concurrent.ExecutionContext
   */
 class FlightServiceImpl(persistentEntityRegistry: PersistentEntityRegistry)(implicit ec: ExecutionContext) extends FlightService {
 
-  override def addFlight: ServiceCall[FlightDto, String] =
+  override def addFlight =
     ServiceCall { dto: FlightDto =>
-      newEntityRef.ask(AddFlight(dto.callsign, dto.equipment, dto.departureIata, dto.arrivalIata)).map(r => r.reply) // TODO: Enhance these OKs for list of failed validations OR success response
+      newEntityRef.ask(AddFlight(dto.callsign, dto.equipment, dto.departureIata, dto.arrivalIata)).map(r => r.reply) // TODO: Enhance these for list of failed validations OR success response
     }
 
   override def addPassenger: ServiceCall[PassengerDto, String] =
     ServiceCall { dto: PassengerDto =>
-      entityRef(dto.flightId).ask(AddPassenger(UUID.randomUUID().toString, dto.firstName, dto.lastName, dto.initial, dto.seatAssignment)).map(_ => "OK")
+      entityRef(dto.flightId).ask(AddPassenger(UUID.randomUUID().toString, dto.firstName, dto.lastName, dto.initial, dto.seatAssignment)).map(r => r.reply)
     }
 
-  override def removePassenger(flightId: UUID, passengerId: UUID): ServiceCall[NotUsed, String] =
+  override def removePassenger(flightId: UUID, passengerId: UUID) =
     ServiceCall { _ =>
       entityRef(flightId).ask(RemovePassenger(passengerId.toString)).map(_ => "OK")
     }
@@ -35,7 +34,7 @@ class FlightServiceImpl(persistentEntityRegistry: PersistentEntityRegistry)(impl
       entityRef(dto.flightId).ask(SelectSeat(dto.passengerId.toString, dto.seatAssignment)).map(_ => "OK")
     }
 
-  override def closeFlight(flightId: UUID): ServiceCall[NotUsed, String] =
+  override def closeFlight(flightId: UUID) =
     ServiceCall { _ =>
       entityRef(flightId).ask(CloseFlight).map(_ => "OK")
     }

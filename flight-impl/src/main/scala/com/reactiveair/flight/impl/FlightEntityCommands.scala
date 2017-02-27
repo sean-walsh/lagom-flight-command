@@ -13,13 +13,13 @@ object FlightCommand {
   implicit val selectSeatFormat: Format[SelectSeat] = Json.format
   implicit val removePassengerFormat: Format[RemovePassenger] = Json.format
   implicit val closeFlightFormat: Format[CloseFlight.type] = JsonFormats.singletonFormat(CloseFlight)
-  implicit val addFlightReply: Format[AddFlightReply] = Json.format
+  implicit val flightReply: Format[FlightReply] = Json.format
 }
 
-final case class AddFlight(callsign: String, equipment: String, departureIata: String, arrivalIata: String) extends FlightCommand with ReplyType[AddFlightReply]
+final case class AddFlight(callsign: String, equipment: String, departureIata: String, arrivalIata: String) extends FlightCommand with ReplyType[FlightReply]
 
 final case class AddPassenger(passengerId: String, lastName: String, firstName: String, initial: String,
-                              seatAssignment: Option[String]) extends FlightCommand with ReplyType[Done]
+                              seatAssignment: Option[String]) extends FlightCommand with ReplyType[FlightReply]
 
 final case class SelectSeat(passengerId: String, seatAssignment: String) extends FlightCommand with ReplyType[Done]
 
@@ -27,4 +27,4 @@ final case class RemovePassenger(passengerId: String) extends FlightCommand with
 
 final case object CloseFlight extends FlightCommand with ReplyType[Done]
 
-case class AddFlightReply(reply: String)
+case class FlightReply(reply: String)

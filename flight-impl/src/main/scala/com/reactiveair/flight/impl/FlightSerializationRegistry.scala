@@ -23,6 +23,6 @@ object FlightSerializationRegistry extends JsonSerializerRegistry {
     JsonSerializer[SeatSelected],
     JsonSerializer[PassengerRemoved],
     JsonSerializer[FlightClosed],
-    JsonSerializer[AddFlightReply]
+    JsonSerializer[FlightReply]
   )
 }
